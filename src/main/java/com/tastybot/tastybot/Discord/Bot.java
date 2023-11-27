@@ -1,4 +1,4 @@
-package com.tastybot.tastybot;
+package com.tastybot.tastybot.Discord;
 //Diese Klasse dient zum starten des Discord-Bots
 
 import lombok.Data;

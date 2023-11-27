@@ -1,5 +1,6 @@
-package com.tastybot.tastybot;
+package com.tastybot.tastybot.Discord;
 
+import com.tastybot.tastybot.Database.AngebotService;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class EventListener extends ListenerAdapter {
 
+    private final AngebotService angebotService;
     @Override //Server
     public void onGuildReady(GuildReadyEvent event) {
         ArrayList<CommandData> commandDataArrayList = new ArrayList<>();
@@ -93,7 +95,9 @@ public class EventListener extends ListenerAdapter {
                     "Abholungsort: " + abholungsort
             );
 
-            event.reply("JUHU😁 TastyBot hat dein Angebot erfolgreich angenommen!").setEphemeral(true).queue();
+            angebotService.saveOfferInDatabase(angebotstitel, vegan, verfuegbarAb, verfuegbarBis, anmerkungen, abholungsort, event.getUser().getIdLong());
+
+            event.reply("JUHU 😁 TastyBot hat dein Angebot erfolgreich angenommen!").setEphemeral(true).queue();
         }
 
     }
