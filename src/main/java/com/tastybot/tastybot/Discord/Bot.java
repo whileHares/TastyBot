@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -31,15 +33,18 @@ public class Bot {
 
     private final EventListener eventListener;
     public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_WHITE = "\u001B[37m";
 
     public JDA startBot() throws InterruptedException {
         JDA jda = JDABuilder.createDefault(botToken)
                 .addEventListeners(eventListener) //für die slash_commands
                 .setActivity(Activity.listening("Haftbefehl"))
+                .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .build()
                 .awaitReady();
         setJda(jda);
-        System.out.println(ANSI_YELLOW+ "ONLINE"); //status
+        System.out.println(ANSI_YELLOW+ "ONLINE" +ANSI_WHITE); //status
         return jda;
     }
 }

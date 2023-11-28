@@ -13,20 +13,18 @@ public class AngebotService {
 
     private final AngebotsErsteller angebotsErsteller;
 
-    public void saveOfferInDatabase(String angebotstitel, Boolean vegan, String verfuegbarAb, String verfuegbarBis, String anmerkungen, String abholungsort, Long userId) {
+    public Angebot saveOfferInDatabase(String angebotstitel, String preference, String verfuegbarAb, String verfuegbarBis, String anmerkungen, String abholungsort, Long userId, String foto) {
 
         Angebot angebot = new Angebot();
         angebot.setAngebotstitel(angebotstitel);
-        angebot.setVegan(vegan);
+        angebot.setPreference(preference);
         angebot.setVerfuegbarAb(verfuegbarAb);
         angebot.setVerfuegbarBis(verfuegbarBis);
         angebot.setAnmerkungen(anmerkungen);
         angebot.setAbholungsort(abholungsort);
         angebot.setUserId(userId);
+        angebot.setFoto(foto);
 
-        angebotRepository.save(angebot);
-
-        angebotsErsteller.sendOfferToChannel(angebot);
-
+        return angebotsErsteller.sendOfferToChannel(angebotRepository.save(angebot));
     }
 }

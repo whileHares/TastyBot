@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AngebotRepository extends JpaRepository<Angebot, Integer> {
+    Angebot findByAngebotsNachrichtenId(Long angebotsnachrichtenId);
+    Angebot findByAngebotLoeschenNachrichtenId(Long angebotloeschennachrichtenId);
 }

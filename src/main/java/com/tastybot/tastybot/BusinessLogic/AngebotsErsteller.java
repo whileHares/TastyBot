@@ -5,6 +5,7 @@ import com.tastybot.tastybot.Database.AngebotRepository;
 import com.tastybot.tastybot.Discord.Bot;
 import com.tastybot.tastybot.Discord.EmbedErsteller;
 import lombok.RequiredArgsConstructor;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -13,8 +14,11 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AngebotsErsteller {
+    private Bot bot;
 
-    private final Bot bot; //dependency injection
+   public void setBot(Bot bot){
+       this.bot = bot;
+   }
 
     private final AngebotRepository angebotRepository;
 
@@ -38,9 +42,15 @@ public class AngebotsErsteller {
     @Value("${server_id}")
     private String server_Id;
 
-    public void sendOfferToChannel(Angebot angebot) {
+    public Angebot sendOfferToChannel(Angebot angebot) {
 
-        bot.getJda().getGuildById(server_Id).getTextChannelById(getTextChannel(angebot)).sendMessageEmbeds(embedErsteller.createOfferEmbed(angebot).build()).queue();
+        bot.getJda().getGuildById(server_Id).getTextChannelById(getTextChannel(angebot)).sendMessageEmbeds(embedErsteller.createOfferEmbed(angebot).build()).addActionRow(
+                Button.primary("interessiert", "Interessiert")).queue((message) -> {
+                    Angebot newAngebot = angebotRepository.findById(angebot.getAngebotId()).orElse(null);
+                    newAngebot.setAngebotsNachrichtenId(message.getIdLong());
+                    angebotRepository.save(newAngebot);
+                });
+        return angebot;
     }
 
     public String getTextChannel(Angebot angebot) {
