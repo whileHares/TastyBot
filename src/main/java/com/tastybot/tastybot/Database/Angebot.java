@@ -30,4 +30,5 @@ public class Angebot {
     private String abholungsort;
     @NonNull
     private Long userId;
+    private Long angebotsNachrichtenId;
 }

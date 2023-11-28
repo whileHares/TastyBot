@@ -30,6 +30,7 @@ public class Bot {
     private JDA jda; /* Eine Instanzvariable vom Typ JDA, die die Instanz des Discord-Bots repräsentiert.*/
 
     private final EventListener eventListener;
+    public static final String ANSI_YELLOW = "\u001B[33m";
 
     public JDA startBot() throws InterruptedException {
         JDA jda = JDABuilder.createDefault(botToken)
@@ -38,7 +39,7 @@ public class Bot {
                 .build()
                 .awaitReady();
         setJda(jda);
-        System.out.println("online"); //status
+        System.out.println(ANSI_YELLOW+ "ONLINE"); //status
         return jda;
     }
 }

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 public class EventListener extends ListenerAdapter {
 
     private final AngebotService angebotService;
+
     @Override //Server
     public void onGuildReady(GuildReadyEvent event) {
         ArrayList<CommandData> commandDataArrayList = new ArrayList<>();
