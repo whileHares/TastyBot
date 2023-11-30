@@ -219,7 +219,7 @@ public class EventListener extends ListenerAdapter {
      * @param date The date to be validated.
      * @return True if the date is valid, false otherwise.
      */
-    private boolean validateDate(String date) {
+    public boolean validateDate(String date) {
         if (date.length() == 10) {
             if (Integer.parseInt(date.substring(0, 2)) < 32 && Integer.parseInt(date.substring(0, 2)) > 0) {
                 if (Integer.parseInt(date.substring(3, 5)) < 13 && Integer.parseInt(date.substring(3, 5)) > 0) {

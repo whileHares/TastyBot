@@ -28,11 +28,11 @@ public class EmbedCreator {
         if (offer.getApplicants().size() >= 5){
             eb.setTitle(":fire: "+ offer.getOfferTitle() , null);
             eb.setColor(new Color(255, 165, 0));
-            eb.setDescription("**This offer is highly sought after!**\n\n**Preference:** " + offer.getPreference() + "\n" + "**Available from:** " + offer.getAvailableFrom() + "\n" + "**Available until:** " + offer.getAvailableUntil() + "\n" + "**Notes:** " + offer.getNotes() + "\n \n" + "**Applicants:** " + offer.getApplicants().size());
+            eb.setDescription("**Dieses Angebot ist sehr gefragt!!**\n\n**Präferenz:** " + offer.getPreference() + "\n" + "**Verfügbar ab:** " + offer.getAvailableFrom() + "\n" + "**Verfügbar bis:** " + offer.getAvailableUntil() + "\n" + "**Anmerkungen:** " + offer.getNotes() + "\n \n" + "**Interessenten:** " + offer.getApplicants().size());
         } else {
             eb.setTitle(offer.getOfferTitle() , null);
             eb.setColor(new Color(73, 152, 101));
-            eb.setDescription("**Preference:** " + offer.getPreference() + "\n" + "**Available from:** " + offer.getAvailableFrom() + "\n" + "**Available until:** " + offer.getAvailableUntil() + "\n" + "**Notes:** " + offer.getNotes() + "\n \n" + "**Applicants:** " + offer.getApplicants().size());
+            eb.setDescription("**Präferenz:** " + offer.getPreference() + "\n" + "**Verfügbar ab:** " + offer.getAvailableFrom() + "\n" + "**Verfügbar bis:** " + offer.getAvailableUntil() + "\n" + "**Anmerkungen:** " + offer.getNotes() + "\n \n" + "**Interessenten:** " + offer.getApplicants().size());
         }
 
         if(offer.getPhotoUrl() != null){
@@ -58,9 +58,9 @@ public class EmbedCreator {
     public EmbedBuilder createOfferInterestedNotification(Offer offer, User user){
         EmbedBuilder eb = new EmbedBuilder();
 
-        eb.setTitle("User '" + user.getGlobalName() + "' is interested in your offer '" + offer.getOfferTitle() + "'" , null);
+        eb.setTitle("Der Nutzer '" + user.getGlobalName() + "' hat Interesse an deinem Angebot '" + offer.getOfferTitle() + "'" , null);
 
-        eb.setDescription("Please contact them with the username '" + user.getGlobalName() + "' to discuss the details!");
+        eb.setDescription("Bitte kontaktiere ihn unter dem Usernamen '" + user.getGlobalName() + "', damit ihr die Einzelheiten klären könnt! ");
 
         eb.setColor(new Color(73, 152, 101));
 
@@ -82,9 +82,9 @@ public class EmbedCreator {
     public EmbedBuilder createOfferCreationNotification(Offer offer){
         EmbedBuilder eb = new EmbedBuilder();
 
-        eb.setTitle("You have created the offer '" + offer.getOfferTitle() + "'" , null);
+        eb.setTitle("Du hast das Angebot '" + offer.getOfferTitle() + "' erstellt" , null);
 
-        eb.setDescription("You can delete the offer using the button below the message once it has been picked up or if you want to withdraw your offer!");
+        eb.setDescription("Du kannst das Angebot wieder durch den Button unter der Nachricht löschen, wenn es jemand abgeholt hat oder du dein Angebot zurückziehen möchtest!");
 
         eb.setColor(new Color(73, 152, 101));
 
