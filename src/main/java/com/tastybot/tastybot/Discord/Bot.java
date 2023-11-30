@@ -1,5 +1,5 @@
 package com.tastybot.tastybot.Discord;
-//Diese Klasse dient zum starten des Discord-Bots
+//Diese Klasse dient zum Starten des Discord-Bots
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +32,10 @@ public class Bot {
     private JDA jda; /* Eine Instanzvariable vom Typ JDA, die die Instanz des Discord-Bots repräsentiert.*/
 
     private final EventListener eventListener;
-    public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_WHITE = "\u001B[37m";
+    /*Farben für Statusausgabe*/
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_BOLD = "\u001B[1m";
 
     public JDA startBot() throws InterruptedException {
         JDA jda = JDABuilder.createDefault(botToken)
@@ -44,7 +46,7 @@ public class Bot {
                 .build()
                 .awaitReady();
         setJda(jda);
-        System.out.println(ANSI_YELLOW+ "ONLINE" +ANSI_WHITE); //status
+        System.out.println(ANSI_GREEN + ANSI_BOLD + "###############\n  # ONLINE #\n###############" + ANSI_RESET); //status
         return jda;
     }
 }
