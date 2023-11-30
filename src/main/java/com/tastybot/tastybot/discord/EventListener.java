@@ -1,9 +1,12 @@
-package com.tastybot.tastybot.Discord;
+package com.tastybot.tastybot.discord;
 
-import com.tastybot.tastybot.BusinessLogic.AngebotsHandler;
-import com.tastybot.tastybot.Database.*;
+import com.tastybot.tastybot.business_logic.OfferHandler;
+import com.tastybot.tastybot.database.entity.Applicant;
+import com.tastybot.tastybot.database.entity.Offer;
+import com.tastybot.tastybot.database.repository.ApplicantRepository;
+import com.tastybot.tastybot.database.repository.OfferRepository;
+import com.tastybot.tastybot.database.service.OfferService;
 import lombok.RequiredArgsConstructor;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -16,16 +19,15 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class EventListener extends ListenerAdapter {
 
-    private final AngebotService angebotService;
-    private final AngebotsHandler angebotsHandler;
-    private final AngebotRepository angebotRepository;
-    private final InteressentRepository interessentRepository;
+    private final OfferService offerService;
+    private final OfferHandler offerHandler;
+    private final OfferRepository offerRepository;
+    private final ApplicantRepository applicantRepository;
 
     @Override //Server
     public void onGuildReady(GuildReadyEvent event) {
@@ -61,12 +63,10 @@ public class EventListener extends ListenerAdapter {
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (event.getName().equals("erstelle-angebot")) {
 
-            //angebotstitel
-            OptionMapping angebotstitelOption = event.getOption("angebotstitel");
-            assert angebotstitelOption != null;
-            String angebotstitel = angebotstitelOption.getAsString();
+            OptionMapping offerTitleOption = event.getOption("angebotstitel");
+            assert offerTitleOption != null;
+            String offerTitle = offerTitleOption.getAsString();
 
-            //preference
             String preference;
             OptionMapping preferenceOption = event.getOption("praeferenzen");
 
@@ -76,82 +76,67 @@ public class EventListener extends ListenerAdapter {
                 preference = "-";
             }
 
+            String availableFrom;
+            OptionMapping availableFromOption = event.getOption("verfuegbar-ab");
 
-            //verfugbar ab
-            String verfuegbarAb;
-            OptionMapping verfuegbarAbOption = event.getOption("verfuegbar-ab");
-
-            if (verfuegbarAbOption != null){
-                verfuegbarAb = verfuegbarAbOption.getAsString();
+            if (availableFromOption != null){
+                availableFrom = availableFromOption.getAsString();
             }else  {
-                verfuegbarAb = "-";
+                availableFrom = "-";
             }
 
-            if(!verfuegbarAb.equals("-")) {
-                if (!validateDate(verfuegbarAb)) {
+            if(!availableFrom.equals("-")) {
+                if (!validateDate(availableFrom)) {
                     event.reply("Das Datum muss im Format dd.MM.yyyy sein! Bitte versuche es erneut.").setEphemeral(true).queue();
                     return;
                 }
             }
 
-            //verfugbar bis
-            String verfuegbarBis;
-            OptionMapping verfuegbarBisOption = event.getOption("verfuegbar-bis");
+            String availableUntil;
+            OptionMapping availableUntilOption = event.getOption("verfuegbar-bis");
 
-            if (verfuegbarBisOption != null){
-                verfuegbarBis = verfuegbarBisOption.getAsString();
+            if (availableUntilOption != null){
+                availableUntil = availableUntilOption.getAsString();
             }else  {
-                verfuegbarBis = "-";
+                availableUntil = "-";
             }
 
-            if(!verfuegbarBis.equals("-")) {
-                if (!validateDate(verfuegbarBis)) {
+            if(!availableUntil.equals("-")) {
+                if (!validateDate(availableUntil)) {
                     event.reply("Das Datum muss im Format dd.MM.yyyy sein! Bitte versuche es erneut.").setEphemeral(true).queue();
                     return;
                 }
             }
 
-            //anmerkungen
-            String anmerkungen;
-            OptionMapping anmerkungenOption = event.getOption("anmerkungen");
+            String notes;
+            OptionMapping notesOption = event.getOption("anmerkungen");
 
-            if (anmerkungenOption != null){
-                anmerkungen = anmerkungenOption.getAsString();
+            if (notesOption != null){
+                notes = notesOption.getAsString();
             }else  {
-                anmerkungen = "-";
+                notes = "-";
             }
 
-            //abholungsort
-            OptionMapping abholungsortOption = event.getOption("abholungsort");
-            assert abholungsortOption != null;
-            String abholungsort = abholungsortOption.getAsString();
+            OptionMapping pickupLocationOption = event.getOption("abholungsort");
+            assert pickupLocationOption != null;
+            String pickupLocation = pickupLocationOption.getAsString();
 
-            //foto
-            OptionMapping fotoOption = event.getOption("foto");
-            String foto;
+            String photo;
+            OptionMapping photoOption = event.getOption("foto");
 
-            if (fotoOption != null){
-                if(fotoOption.getAsAttachment().isImage()) {
-                    foto = fotoOption.getAsAttachment().getProxyUrl();
+            if (photoOption != null){
+                if(photoOption.getAsAttachment().isImage()) {
+                    photo = photoOption.getAsAttachment().getProxyUrl();
                 }else {
-                    foto = null;
+                    photo = null;
                 }
             }else  {
-                foto = null;
+                photo = null;
             }
 
-            System.out.println(
-                    "Angebotstitel: " + angebotstitel + "\n" +
-                            "Präferenz: " + preference + "\n" +
-                            "Verfügbar ab: " + verfuegbarAb + "\n" +
-                            "Verfügbar bis: " + verfuegbarBis + "\n" +
-                            "Anmerkungen: " + anmerkungen + "\n" +
-                            "Abholungsort: " + abholungsort
-            );
+            Offer offer = offerService.saveOfferInDatabase(offerTitle, preference, availableFrom, availableUntil, notes, pickupLocation, event.getUser().getIdLong(), photo);
 
-            Angebot angebot = angebotService.saveOfferInDatabase(angebotstitel, preference, verfuegbarAb, verfuegbarBis, anmerkungen, abholungsort, event.getUser().getIdLong(), foto);
-
-            angebotsHandler.confirmOffer(event, angebot);
+            offerHandler.confirmOffer(event, offer);
 
             event.reply("JUHU 😁 TastyBot hat dein Angebot erfolgreich angenommen!").setEphemeral(true).queue();
         }
@@ -161,30 +146,35 @@ public class EventListener extends ListenerAdapter {
     public void onButtonInteraction(ButtonInteractionEvent event) {
         if (event.getComponentId().equals("interessiert")) {
 
-            Angebot angebot = angebotRepository.findByAngebotsNachrichtenId(event.getInteraction().getMessageIdLong());
+            Offer offer = offerRepository.findByOfferMessageId(event.getInteraction().getMessageIdLong());
 
-            if (interessentRepository.findByUserIdAndAngebot(event.getUser().getIdLong(), angebot) != null){
+            if (applicantRepository.findByUserIdAndOffer(event.getUser().getIdLong(), offer) != null){
                event.reply("Du hast dich für dieses Angebot schon als 'Interessiert' gemeldet!").setEphemeral(true).queue();
                return;
             }
 
-            event.reply("Du hast dich erfolgreich für das Angebot '" + angebot.getAngebotstitel() + "' als interessiert gemeldet! Wir haben den Angebotsersteller benachrichtigt und ihm deinen Discord Usernamen mitgeteilt. Er wird nun mit dir in Kontakt treten, damit ihr die Einzelheiten klären könnt!").setEphemeral(true).queue();
-            angebotsHandler.notifyOfferCreator(angebot, event.getUser());
+            if (event.getUser().getIdLong() == offer.getUserId()){
+                event.reply("Du kannst dich nicht bei deinem eigenen Angebot als 'Interessiert' melden!").setEphemeral(true).queue();
+                return;
+            }
 
-            Interessent interessent = new Interessent();
-            interessent.setUserId(event.getUser().getIdLong());
-            interessent.setAngebot(angebot);
+            event.reply("Du hast dich erfolgreich für das Angebot '" + offer.getOfferTitle() + "' als interessiert gemeldet! Wir haben den Angebotsersteller benachrichtigt und ihm deinen Discord Usernamen mitgeteilt. Er wird nun mit dir in Kontakt treten, damit ihr die Einzelheiten klären könnt!").setEphemeral(true).queue();
+            offerHandler.notifyOfferCreator(offer, event.getUser());
 
-            angebot.getInteressenten().add(interessent);
+            Applicant applicant = new Applicant();
+            applicant.setUserId(event.getUser().getIdLong());
+            applicant.setOffer(offer);
 
-            interessentRepository.save(interessent);
-            angebotRepository.save(angebot);
+            offer.getApplicants().add(applicant);
 
-            angebotsHandler.updateOffer(angebot);
+            applicantRepository.save(applicant);
+            offerRepository.save(offer);
+
+            offerHandler.updateOffer(offer);
 
         } else if (event.getComponentId().equals("angebot-loeschen")) {
-            Angebot angebot = angebotRepository.findByAngebotLoeschenNachrichtenId(event.getInteraction().getMessageIdLong());
-            angebotsHandler.deleteOffer(angebot);
+            Offer offer = offerRepository.findByOfferDeleteMessageId(event.getInteraction().getMessageIdLong());
+            offerHandler.deleteOffer(offer);
             event.reply("Das Angebot wurde erfolgreich gelöscht!").queue();
         }
     }

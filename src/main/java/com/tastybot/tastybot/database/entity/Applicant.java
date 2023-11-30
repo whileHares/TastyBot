@@ -1,4 +1,4 @@
-package com.tastybot.tastybot.Database;
+package com.tastybot.tastybot.database.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -7,14 +7,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor(force = true)
-public class Interessent {
+public class Applicant {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer interessentId;
+    private Integer applicantId;
 
     private Long userId;
 
     @ManyToOne
-    @JoinColumn(name="angebot_id")
-    private Angebot angebot;
+    @JoinColumn(name="offer_id")
+    private Offer offer;
 }

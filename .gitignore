@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+/src/main/resources/META-INF/
+/out/artifacts/TastyBot_jar/TastyBot.jar
+/out/
