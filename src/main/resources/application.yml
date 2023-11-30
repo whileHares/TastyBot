@@ -4,9 +4,9 @@
 
 spring:
   datasource:
-    url: jdbc:mysql://eu01-sql.pebblehost.com:3306/customer_613339_tastybot
-    username: customer_613339_tastybot
-    password: Nji$4VaVI3shxMnCST7$
+    url: jdbc:mysql://49.13.118.134:3306/tastybot
+    username: extern
+    password: BudMuecke12345#
   jpa:
     hibernate:
       ddl-auto: update
