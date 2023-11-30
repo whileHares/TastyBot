@@ -29,7 +29,7 @@ public class EventListener extends ListenerAdapter {
     private final OfferRepository offerRepository;
     private final ApplicantRepository applicantRepository;
 
-    @Override //Server
+    @Override
     public void onGuildReady(GuildReadyEvent event) {
         ArrayList<CommandData> commandDataArrayList = new ArrayList<>();
         commandDataArrayList.add(Commands.slash("erstelle-angebot", "Erstelle ein Angebot")
@@ -59,7 +59,7 @@ public class EventListener extends ListenerAdapter {
         event.getGuild().updateCommands().addCommands(commandDataArrayList).queue();
     }
 
-    @Override //Slash-Command-Events
+    @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (event.getName().equals("erstelle-angebot")) {
 
