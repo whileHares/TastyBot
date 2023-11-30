@@ -20,15 +20,39 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
+
+/**
+ * Listens for Discord events and responds accordingly.
+ */
 @Component
 @RequiredArgsConstructor
 public class EventListener extends ListenerAdapter {
 
+    /**
+     * Service responsible for managing offer-related operations.
+     */
     private final OfferService offerService;
+
+    /**
+     * Handler class for managing operations related to offers.
+     */
     private final OfferHandler offerHandler;
+
+    /**
+     * Repository for accessing and managing offer entities in the database.
+     */
     private final OfferRepository offerRepository;
+
+    /**
+     * Repository for accessing and managing applicant entities in the database.
+     */
     private final ApplicantRepository applicantRepository;
 
+    /**
+     * Called when the guild is fully loaded and ready.
+     *
+     * @param event The GuildReadyEvent triggered when the guild is ready.
+     */
     @Override
     public void onGuildReady(GuildReadyEvent event) {
         ArrayList<CommandData> commandDataArrayList = new ArrayList<>();
@@ -59,6 +83,11 @@ public class EventListener extends ListenerAdapter {
         event.getGuild().updateCommands().addCommands(commandDataArrayList).queue();
     }
 
+    /**
+     * Called when a slash command is invoked.
+     *
+     * @param event The SlashCommandInteractionEvent triggered when a slash command is invoked.
+     */
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (event.getName().equals("erstelle-angebot")) {
@@ -142,6 +171,11 @@ public class EventListener extends ListenerAdapter {
         }
     }
 
+    /**
+     * Called when a button interaction occurs.
+     *
+     * @param event The ButtonInteractionEvent triggered when a button is interacted with.
+     */
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
         if (event.getComponentId().equals("interessiert")) {
@@ -179,6 +213,12 @@ public class EventListener extends ListenerAdapter {
         }
     }
 
+    /**
+     * Validates the format of the date.
+     *
+     * @param date The date to be validated.
+     * @return True if the date is valid, false otherwise.
+     */
     private boolean validateDate(String date) {
         if (date.length() == 10) {
             if (Integer.parseInt(date.substring(0, 2)) < 32 && Integer.parseInt(date.substring(0, 2)) > 0) {

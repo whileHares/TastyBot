@@ -10,22 +10,51 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+/**
+ * Represents the Discord bot and manages its initialization and startup.
+ */
 @Service
 @Data
 @RequiredArgsConstructor
 public class Bot {
 
+    /**
+     * The Discord bot token for authentication.
+     */
     @Value("${discord_token}")
     private String botToken;
 
+    /**
+     * The JDA instance representing the Discord bot.
+     */
     private JDA jda;
 
+    /**
+     * The event listener for handling Discord events.
+     */
     private final EventListener eventListener;
 
+    /**
+     * ANSI escape code for resetting text formatting.
+     */
     public static final String ANSI_RESET = "\u001B[0m";
+
+    /**
+     * ANSI escape code for green text color.
+     */
     public static final String ANSI_GREEN = "\u001B[32m";
+
+    /**
+     * ANSI escape code for bold text.
+     */
     public static final String ANSI_BOLD = "\u001B[1m";
 
+    /**
+     * Initializes and starts the Discord bot.
+     *
+     * @return The JDA instance representing the Discord bot.
+     * @throws InterruptedException If an error occurs during bot startup.
+     */
     public JDA startBot() throws InterruptedException {
         JDA jda = JDABuilder.createDefault(botToken)
                 .addEventListeners(eventListener)
