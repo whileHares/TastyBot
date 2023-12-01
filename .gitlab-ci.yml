@@ -1,7 +1,22 @@
 stages:
+  - build
   - test
 
 test:
-  stage: test
+build-java:
+  stage: build
+  image: maven:3.8.3-openjdk-21
   script:
-    - echo "Running tests..."
+    - echo "Compiling"
+    - mvn clean install
+  artifacts:
+    paths:
+      - ./target/*.jar
+    expire_in: 2 week
+
+test-java:
+  stage: test
+  image: maven:3.8.3-openjdk-21
+  script:
+    - echo "Running tests"
+    - mvn test
